@@ -60,8 +60,8 @@ const drawLadders = () => {
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#008AD8";
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#004C54";
+  ctx.lineWidth = 2;
 
   ladders.forEach(({ start, end }) => {
     const startCell = document.getElementById(start.toString());
@@ -117,8 +117,8 @@ const drawSnakes = () => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  ctx.strokeStyle = "#95C21B";
-  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = "#F20F5A";
+  ctx.lineWidth = 3;
   ctx.lineCap = "round";
 
   snakes.forEach(({ start, end }) => {
@@ -168,7 +168,7 @@ const drawSnakes = () => {
     // **🐍 Snake Head**
     ctx.beginPath();
     ctx.arc(startX, startY, 12, 0, Math.PI * 2);
-    ctx.fillStyle = "#03B303";
+    ctx.fillStyle = "#A60A3D";
     ctx.fill();
     ctx.stroke();
 
@@ -289,7 +289,6 @@ watch(
 #snake-board {
   width: 800px;
   height: 800px;
-  border: 1px solid #6e0d10;
   display: flex;
   flex-direction: column-reverse;
 }
@@ -320,21 +319,21 @@ watch(
 
 /* Alternating Row Colors */
 #snake-board .row > .column:nth-child(odd) {
-  background-color: #b30018;
-  color: #dbe2e9;
+  background-color: #00958a;
+  color: #9fe2bf;
 }
 
 #snake-board .row > .column:nth-child(even) {
-  background-color: #dbe2e9;
-  color: #b30018;
+  background-color: #9fe2bf;
+  color: #00958a;
 }
 
 #snake-board .row > .column.active {
-  background-color: #e6a519;
+  background-color: #ed8b00;
 }
 
 #snake-board .row > .column.snake-highlight {
-  background-color: #e10600;
+  background-color: #ed1d24;
   transition: background-color 0.5s ease;
 }
 </style>
