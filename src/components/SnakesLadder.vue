@@ -200,20 +200,25 @@ const getActive = (col: number) => {
   return step === col;
 };
 
-const animateSnakeMovement = (currentStep: number, endStep: number) => {
-  if (currentStep <= endStep || isMoving.value) return; // Stop if reached the bottom or already moving
+const animateMovement = (
+  currentStep: number,
+  endStep: number,
+  isSnake: boolean
+) => {
+  if (isMoving.value) return; // Prevent multiple animations
 
   isMoving.value = true; // Lock movement
+  activeSnake.value = isSnake ? currentStep : null; // Highlight only if snake
 
   const moveStep = (step: number) => {
-    if (step > endStep) {
+    if ((isSnake && step > endStep) || (!isSnake && step < endStep)) {
       setTimeout(() => {
-        emit("update:step", step - 1); // Move player down
-        moveStep(step - 1); // Continue moving
-      }, 200); // Adjust speed
+        emit("update:step", isSnake ? step - 1 : step + 1); // Move down for snake, up for ladder
+        moveStep(isSnake ? step - 1 : step + 1);
+      }, 100); // Adjust speed
     } else {
       isMoving.value = false; // Unlock movement
-      activeSnake.value = null; // Remove highlight after movement ends
+      activeSnake.value = null; // Remove snake highlight
     }
   };
 
@@ -227,12 +232,17 @@ watch(
     if (isMoving.value) return; // Ignore updates if already moving
 
     const snake = snakes.find((s) => s.start === newStep);
+    const ladder = ladders.find((l) => l.start === newStep);
+
     if (snake) {
       console.log(
-        `Oh no! You landed on a snake at ${snake.start}. Moving to ${snake.end}`
+        `🐍 Oh no! You landed on a snake at ${snake.start}. Moving to ${snake.end}`
       );
       activeSnake.value = snake.start; // Highlight only this snake
-      animateSnakeMovement(snake.start, snake.end);
+      animateMovement(snake.start, snake.end, true);
+    } else if (ladder) {
+      console.log(`🪜 Climbing ladder from ${ladder.start} to ${ladder.end}`);
+      animateMovement(ladder.start, ladder.end, false);
     }
   }
 );

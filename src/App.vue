@@ -31,7 +31,7 @@ const handler = () => {
   // Starts the game
   if (value === 1 && gameStarted.value === false) {
     gameStarted.value = true;
-    step.value = 1;
+    step.value = 0;
     return;
   }
 };
@@ -58,8 +58,10 @@ function restart() {
       <div>Rolled Dice: {{ rolled }}</div>
       <div>Game Started: {{ gameStarted }}</div>
       <div>Game Over: {{ gameEnded }}</div>
-      <button @click="handler" :disabled="gameEnded">Roll a dice</button>
-      <button @click="restart">Restart Game</button>
+      <button class="btn-primary" @click="handler" :disabled="gameEnded">
+        Roll a dice
+      </button>
+      <button class="btn-secondary" @click="restart">Restart Game</button>
     </div>
   </div>
 </template>
@@ -78,5 +80,23 @@ function restart() {
   flex: 0.5;
   gap: 12px;
   align-self: center;
+}
+.btn-primary {
+  color: #fff;
+  background-color: blue;
+  padding: 8px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-secondary {
+  color: #363636;
+  background-color: skyblue;
+  padding: 8px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
