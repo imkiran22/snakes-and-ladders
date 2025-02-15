@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 
-defineProps<{}>();
+const {
+  step = 0,
+  gameEnded,
+  gameStarted,
+} = defineProps<{
+  step: number;
+  gameStarted: boolean;
+  gameEnded: boolean;
+}>();
 
 // Creating the 10x10 board
 const rows = Array.from({ length: 10 }, (_, rowIndex) =>
@@ -123,7 +131,7 @@ const drawSnakes = () => {
     ctx.beginPath();
     ctx.moveTo(startX, startY);
 
-    const segments = 8; // More segments = smoother curves
+    const segments = 6; // More segments = smoother curves
     for (let i = 1; i <= segments; i++) {
       const t = i / segments;
       const midX = startX + (endX - startX) * t;
@@ -174,16 +182,21 @@ onMounted(() => {
     drawSnakes();
   }, 300); // Small delay to ensure all elements are positioned
 });
+
+const getActive = (col: number) => {
+  return step === col;
+};
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" :class="{ disabled: !gameStarted || gameEnded }">
     <div class="wrapper">
       <canvas id="canvas" width="800" height="800"></canvas>
       <div id="snake-board">
         <div class="row" v-for="(row, rowIndex) in rows" :key="rowIndex">
           <div
             class="column"
+            :class="{ active: getActive(col) }"
             v-for="col in row"
             :key="col"
             :id="col.toString()"
@@ -201,6 +214,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.container.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .wrapper {
@@ -256,5 +274,9 @@ onMounted(() => {
 #snake-board .row > .column:nth-child(even) {
   background-color: #dbe2e9;
   color: #b30018;
+}
+
+#snake-board .row > .column.active {
+  background-color: #e6a519;
 }
 </style>
