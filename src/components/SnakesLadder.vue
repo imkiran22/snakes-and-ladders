@@ -17,13 +17,6 @@ const isMoving = ref(false); // Prevents multiple triggers
 
 const activeSnake = ref<number | null>(null); // Stores the snake being animated
 
-// const highlightSnake = (snakeStart: number) => {
-//   highlightedSnake.value = snakeStart;
-//   setTimeout(() => {
-//     highlightedSnake.value = null; // Reset after 1.5 seconds
-//   }, 1500);
-// };
-
 // Creating the 10x10 board
 const rows = Array.from({ length: 10 }, (_, rowIndex) =>
   Array.from({ length: 10 }, (_, colIndex) => rowIndex * 10 + (colIndex + 1))
@@ -196,9 +189,7 @@ onMounted(() => {
   }, 300); // Small delay to ensure all elements are positioned
 });
 
-const getActive = (col: number) => {
-  return step === col;
-};
+const getActive = (col: number) => step === col;
 
 const animateMovement = (
   currentStep: number,
@@ -339,7 +330,7 @@ watch(
 }
 
 #snake-board .row > .column.active {
-  background-color: #ed8b00;
+  background-color: #aadb1e;
 }
 
 #snake-board .row > .column.snake-highlight {
