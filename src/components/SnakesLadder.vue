@@ -20,6 +20,17 @@ const ladders = [
   { start: 80, end: 99 },
 ];
 
+// Define ladders (start and end positions on board)
+const snakes = [
+  { start: 32, end: 10 },
+  { start: 36, end: 6 },
+  { start: 48, end: 26 },
+  { start: 62, end: 18 },
+  { start: 88, end: 24 },
+  { start: 95, end: 56 },
+  { start: 97, end: 78 },
+];
+
 // Function to draw ladders using Canvas
 const drawLadders = () => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -28,8 +39,8 @@ const drawLadders = () => {
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#008AD8";
+  ctx.lineWidth = 3;
 
   ladders.forEach(({ start, end }) => {
     const startCell = document.getElementById(start.toString());
@@ -79,9 +90,89 @@ const drawLadders = () => {
   });
 };
 
+const drawSnakes = () => {
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.strokeStyle = "#95C21B";
+  ctx.lineWidth = 3.5;
+  ctx.lineCap = "round";
+
+  snakes.forEach(({ start, end }) => {
+    const startCell = document.getElementById(start.toString());
+    const endCell = document.getElementById(end.toString());
+
+    if (!startCell || !endCell) {
+      console.warn(`Missing cell(s) for snake: ${start} → ${end}`);
+      return;
+    }
+
+    // Get positions of cells
+    const startRect = startCell.getBoundingClientRect();
+    const endRect = endCell.getBoundingClientRect();
+    const boardRect = canvas.getBoundingClientRect();
+
+    const startX = startRect.left - boardRect.left + startRect.width / 2;
+    const startY = startRect.top - boardRect.top + startRect.height / 2;
+    const endX = endRect.left - boardRect.left + endRect.width / 2;
+    const endY = endRect.top - boardRect.top + endRect.height / 2;
+
+    // **🐍 Smooth Snaking Motion**
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+
+    const segments = 8; // More segments = smoother curves
+    for (let i = 1; i <= segments; i++) {
+      const t = i / segments;
+      const midX = startX + (endX - startX) * t;
+      const midY = startY + (endY - startY) * t;
+
+      const waveOffset = (i % 2 === 0 ? 1 : -1) * 50; // Larger offset for a more natural wave
+
+      ctx.bezierCurveTo(
+        midX + waveOffset,
+        midY - waveOffset,
+        midX - waveOffset,
+        midY + waveOffset,
+        midX,
+        midY
+      );
+    }
+
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // **🐍 Snake Head**
+    ctx.beginPath();
+    ctx.arc(startX, startY, 12, 0, Math.PI * 2);
+    ctx.fillStyle = "#03B303";
+    ctx.fill();
+    ctx.stroke();
+
+    // **👀 Eyes**
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(startX - 4, startY - 5, 2.5, 0, Math.PI * 2);
+    ctx.arc(startX + 4, startY - 5, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // **🖤 Pupils**
+    ctx.fillStyle = "#b30018";
+    ctx.beginPath();
+    ctx.arc(startX - 4, startY - 5, 1, 0, Math.PI * 2);
+    ctx.arc(startX + 4, startY - 5, 1, 0, Math.PI * 2);
+    ctx.fill();
+  });
+};
+
 // Ensure elements are rendered before drawing ladders
 onMounted(() => {
-  setTimeout(drawLadders, 300); // Small delay to ensure all elements are positioned
+  setTimeout(() => {
+    drawLadders();
+    drawSnakes();
+  }, 300); // Small delay to ensure all elements are positioned
 });
 </script>
 
@@ -127,7 +218,7 @@ onMounted(() => {
 #snake-board {
   width: 800px;
   height: 800px;
-  border: 1px solid darkcyan;
+  border: 1px solid #6e0d10;
   display: flex;
   flex-direction: column-reverse;
 }
@@ -138,7 +229,6 @@ onMounted(() => {
 }
 
 #snake-board .column {
-  border: 1px solid darkcyan;
   flex: 1;
   text-align: center;
 }
@@ -149,7 +239,6 @@ onMounted(() => {
   justify-content: center;
   font-size: 22px;
   font-weight: 500;
-  color: #3e4b3c;
   height: 100%;
 }
 
@@ -159,11 +248,13 @@ onMounted(() => {
 }
 
 /* Alternating Row Colors */
-#snake-board .row:nth-child(odd) .column {
-  background-color: #e0f7da;
+#snake-board .row > .column:nth-child(odd) {
+  background-color: #b30018;
+  color: #dbe2e9;
 }
 
-#snake-board .row:nth-child(even) .column {
-  background-color: #c8e6c9;
+#snake-board .row > .column:nth-child(even) {
+  background-color: #dbe2e9;
+  color: #b30018;
 }
 </style>
