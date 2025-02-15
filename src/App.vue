@@ -4,6 +4,7 @@ import { ref } from "vue";
 defineProps<{}>();
 
 const step = ref(0);
+const rolled = ref(0);
 
 const dicesList = [1, 2, 3, 4, 5, 6];
 
@@ -13,6 +14,8 @@ const gameEnded = ref(false);
 const handler = () => {
   const index = Math.floor(Math.random() * dicesList.length);
   const value = dicesList[index];
+
+  rolled.value = value;
 
   if (gameStarted.value) {
     // Game over
@@ -32,6 +35,13 @@ const handler = () => {
     return;
   }
 };
+
+function restart() {
+  gameStarted.value = false;
+  gameEnded.value = false;
+  step.value = 0;
+  rolled.value = 0;
+}
 </script>
 
 <template>
@@ -45,9 +55,11 @@ const handler = () => {
     </div>
     <div id="game-progress">
       <div>Current Step: {{ step }}</div>
+      <div>Rolled Dice: {{ rolled }}</div>
       <div>Game Started: {{ gameStarted }}</div>
       <div>Game Over: {{ gameEnded }}</div>
-      <button @click="handler">Roll a dice</button>
+      <button @click="handler" :disabled="gameEnded">Roll a dice</button>
+      <button @click="restart">Restart Game</button>
     </div>
   </div>
 </template>
