@@ -48,7 +48,7 @@ function restart() {
   <div id="root">
     <div id="board">
       <SnakesLadder
-        :step="step"
+        v-model:step="step"
         :game-started="gameStarted"
         :game-ended="gameEnded"
       />

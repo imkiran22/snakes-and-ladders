@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, watch, ref } from "vue";
 
 const {
   step = 0,
@@ -10,6 +10,19 @@ const {
   gameStarted: boolean;
   gameEnded: boolean;
 }>();
+
+const emit = defineEmits(["update:step"]);
+
+const isMoving = ref(false); // Prevents multiple triggers
+
+const activeSnake = ref<number | null>(null); // Stores the snake being animated
+
+// const highlightSnake = (snakeStart: number) => {
+//   highlightedSnake.value = snakeStart;
+//   setTimeout(() => {
+//     highlightedSnake.value = null; // Reset after 1.5 seconds
+//   }, 1500);
+// };
 
 // Creating the 10x10 board
 const rows = Array.from({ length: 10 }, (_, rowIndex) =>
@@ -186,6 +199,43 @@ onMounted(() => {
 const getActive = (col: number) => {
   return step === col;
 };
+
+const animateSnakeMovement = (currentStep: number, endStep: number) => {
+  if (currentStep <= endStep || isMoving.value) return; // Stop if reached the bottom or already moving
+
+  isMoving.value = true; // Lock movement
+
+  const moveStep = (step: number) => {
+    if (step > endStep) {
+      setTimeout(() => {
+        emit("update:step", step - 1); // Move player down
+        moveStep(step - 1); // Continue moving
+      }, 200); // Adjust speed
+    } else {
+      isMoving.value = false; // Unlock movement
+      activeSnake.value = null; // Remove highlight after movement ends
+    }
+  };
+
+  moveStep(currentStep);
+};
+
+// Watch for when step lands on a snake
+watch(
+  () => step,
+  (newStep) => {
+    if (isMoving.value) return; // Ignore updates if already moving
+
+    const snake = snakes.find((s) => s.start === newStep);
+    if (snake) {
+      console.log(
+        `Oh no! You landed on a snake at ${snake.start}. Moving to ${snake.end}`
+      );
+      activeSnake.value = snake.start; // Highlight only this snake
+      animateSnakeMovement(snake.start, snake.end);
+    }
+  }
+);
 </script>
 
 <template>
@@ -196,7 +246,10 @@ const getActive = (col: number) => {
         <div class="row" v-for="(row, rowIndex) in rows" :key="rowIndex">
           <div
             class="column"
-            :class="{ active: getActive(col) }"
+            :class="{
+              active: getActive(col),
+              'snake-highlight': activeSnake === col,
+            }"
             v-for="col in row"
             :key="col"
             :id="col.toString()"
@@ -217,7 +270,7 @@ const getActive = (col: number) => {
 }
 
 .container.disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -278,5 +331,10 @@ const getActive = (col: number) => {
 
 #snake-board .row > .column.active {
   background-color: #e6a519;
+}
+
+#snake-board .row > .column.snake-highlight {
+  background-color: #e10600;
+  transition: background-color 0.5s ease;
 }
 </style>
