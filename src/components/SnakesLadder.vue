@@ -53,8 +53,8 @@ const drawLadders = () => {
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#004C54";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#06BF06";
+  ctx.lineWidth = 3;
 
   ladders.forEach(({ start, end }) => {
     const startCell = document.getElementById(start.toString());
@@ -320,13 +320,13 @@ watch(
 
 /* Alternating Row Colors */
 #snake-board .row > .column:nth-child(odd) {
-  background-color: #00958a;
-  color: #9fe2bf;
+  background-color: #a1000e;
+  color: #f0e2b6;
 }
 
 #snake-board .row > .column:nth-child(even) {
-  background-color: #9fe2bf;
-  color: #00958a;
+  background-color: #cdc4aa;
+  color: #a1000e;
 }
 
 #snake-board .row > .column.active {
