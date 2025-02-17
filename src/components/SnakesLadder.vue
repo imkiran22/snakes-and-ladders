@@ -137,8 +137,22 @@ defineExpose({
   background-color: #9b945f;
 }
 
+@keyframes pulse {
+  0% {
+    background-color: #ed1d24;
+    box-shadow: 0 0 10px rgba(237, 29, 36, 0.7);
+  }
+  50% {
+    background-color: #ff474d;
+    box-shadow: 0 0 20px rgba(237, 29, 36, 1);
+  }
+  100% {
+    background-color: #ed1d24;
+    box-shadow: 0 0 10px rgba(237, 29, 36, 0.7);
+  }
+}
+
 #snake-board .row > .column.snake-highlight {
-  background-color: #ed1d24;
-  transition: background-color 0.5s ease;
+  animation: pulse 0.4s infinite ease-in-out;
 }
 </style>

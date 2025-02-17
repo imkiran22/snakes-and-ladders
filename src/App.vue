@@ -31,6 +31,12 @@ const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
   <div id="root">
     <div id="board">
       <SnakesLadder :no-of-players="2" ref="snakeBoardRef" />
+      <div class="restart" v-if="!!snakeBoardRef?.gameEnded">
+        <span class="win-text"
+          >Player {{ snakeBoardRef?.currentPlayerIndex + 1 }} Won</span
+        >
+        <button @click="restart">Restart Game</button>
+      </div>
     </div>
     <div id="game-progress">
       <div class="game-status">
@@ -76,7 +82,39 @@ const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
 }
 #board {
   flex: 1;
+  position: relative;
 }
+
+.restart {
+  position: absolute;
+  background-color: #dadada;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.win-text {
+  font-size: 32px;
+}
+
+.restart button {
+  padding: 4px;
+  margin: 4px;
+  color: #363636;
+  background-color: #00b2a9;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 28px;
+}
+
 #game-progress {
   display: flex;
   flex-direction: column;
