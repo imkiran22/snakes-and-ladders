@@ -198,12 +198,19 @@ export default function useGameProgress(noOfPlayers: number) {
 
   const getActiveClass = (col: number) => {
     const classes: Array<string> = [];
+    let count = 0;
     playerSteps.value.forEach((pl, index) => {
       if (pl === col) {
         classes.push(`active-${index + 1}`);
+        count += 1;
       }
     });
-    return classes.join(";");
+
+    // More than one player at same position
+    if (count > 1) {
+      classes.push("active-more");
+    }
+    return classes.join(" ");
   };
 
   const rotatePlayer = () => {
@@ -284,17 +291,23 @@ export default function useGameProgress(noOfPlayers: number) {
       await changeCallback(step + value);
 
       // If it is a ladder or snake wait
+      isMoving.value = true;
       setTimeout(() => {
         if (![6, 5, 1].includes(value)) {
           rotatePlayer();
         }
-      }, 1000);
+        isMoving.value = false;
+      }, 500);
     } else {
       if (value === 1) {
         players.value[tempIndex].started = true;
         players.value[tempIndex].step = 0;
       } else {
-        rotatePlayer();
+        isMoving.value = true;
+        setTimeout(() => {
+          rotatePlayer();
+          isMoving.value = false;
+        }, 500);
       }
     }
   };

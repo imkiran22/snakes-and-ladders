@@ -133,6 +133,10 @@ defineExpose({
   background-color: #ffc600;
 }
 
+#snake-board .row > .column.active-more {
+  background-color: #9b945f;
+}
+
 #snake-board .row > .column.snake-highlight {
   background-color: #ed1d24;
   transition: background-color 0.5s ease;
