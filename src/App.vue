@@ -1,67 +1,70 @@
 <script setup lang="ts">
-import SnakesLadder from "./components/SnakesLadder.vue";
 import { ref } from "vue";
-defineProps<{}>();
+import SnakesLadder from "./components/SnakesLadder.vue";
+const snakeBoardRef = ref<{
+  handler: () => void;
+  restart: () => void;
+  gameStarted: boolean;
+  gameEnded: boolean;
+  rolled: number;
+  currentPlayerIndex: number;
+  players: Record<string, { step: number; started: boolean }>;
+  disabled: boolean;
+}>();
 
-const step = ref(0);
-const rolled = ref(0);
-
-const dicesList = [1, 2, 3, 4, 5, 6];
-
-const gameStarted = ref(false);
-const gameEnded = ref(false);
-
-const handler = () => {
-  const index = Math.floor(Math.random() * dicesList.length);
-  const value = dicesList[index];
-
-  rolled.value = value;
-
-  if (gameStarted.value) {
-    // Game over
-    if (step.value + value >= 100) {
-      step.value = 100;
-      gameEnded.value = true;
-      return;
-    }
-    step.value += value;
-    return;
-  }
-
-  // Starts the game
-  if (value === 1 && gameStarted.value === false) {
-    gameStarted.value = true;
-    step.value = 0;
-    return;
+const rollDice = () => {
+  if (snakeBoardRef.value) {
+    snakeBoardRef.value?.handler();
   }
 };
 
-function restart() {
-  gameStarted.value = false;
-  gameEnded.value = false;
-  step.value = 0;
-  rolled.value = 0;
-}
+const restart = () => {
+  if (snakeBoardRef.value) {
+    snakeBoardRef.value?.restart();
+  }
+};
+
+const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
 </script>
 
 <template>
   <div id="root">
     <div id="board">
-      <SnakesLadder
-        v-model:step="step"
-        :game-started="gameStarted"
-        :game-ended="gameEnded"
-      />
+      <SnakesLadder :no-of-players="2" ref="snakeBoardRef" />
     </div>
     <div id="game-progress">
-      <div>Current Step: {{ step }}</div>
-      <div>Rolled Dice: {{ rolled }}</div>
-      <div>Game Started: {{ gameStarted }}</div>
-      <div>Game Over: {{ gameEnded }}</div>
-      <button class="btn-primary" @click="handler" :disabled="gameEnded">
-        Roll a dice
-      </button>
-      <button class="btn-secondary" @click="restart">Restart Game</button>
+      <div class="game-status">
+        <div>Game Started: {{ snakeBoardRef?.gameStarted }}</div>
+        <div>Game Over: {{ snakeBoardRef?.gameEnded }}</div>
+        <div>Last Roll: {{ snakeBoardRef?.rolled }}</div>
+      </div>
+      <div class="players">
+        <div
+          v-for="(player, index) in Object.values(snakeBoardRef?.players ?? {})"
+          class="player"
+          :class="{ active: snakeBoardRef?.currentPlayerIndex === index }"
+          :key="index"
+        >
+          <span>Player {{ index + 1 }}</span>
+          <svg width="300" height="130" xmlns="http://www.w3.org/2000/svg">
+            <rect
+              width="40"
+              height="40"
+              x="10"
+              y="10"
+              rx="20"
+              ry="20"
+              :fill="playerColors[index]"
+            />
+          </svg>
+          <span>Position: {{ player.step }}</span>
+        </div>
+      </div>
+
+      <div class="actions" :class="{ disabled: snakeBoardRef?.disabled }">
+        <button class="btn-primary" @click="rollDice">Roll a dice</button>
+        <button class="btn-secondary" @click="restart">Restart Game</button>
+      </div>
     </div>
   </div>
 </template>
@@ -98,5 +101,53 @@ function restart() {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.players {
+  display: flex;
+  gap: 12px;
+}
+
+.player {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background-color: #00a3e1;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.player.active {
+  background-color: #009a17;
+  animation: bounceScale 0.4s ease-in;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-self: center;
+}
+
+.actions.disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+@keyframes bounceScale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.game-status {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
