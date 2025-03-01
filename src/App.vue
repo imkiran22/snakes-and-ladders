@@ -25,7 +25,7 @@ const restart = () => {
 };
 
 const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
-const noOfPlayers = 2;
+const noOfPlayers = 3;
 </script>
 
 <template>

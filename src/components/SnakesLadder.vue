@@ -170,10 +170,10 @@ defineExpose({
   justify-content: center;
   font-size: 20em;
   font-weight: bold;
-  background: #ccc;
+  background: #000;
   border-radius: 12px;
-  opacity: 0.8;
+  opacity: 0.7;
   z-index: 999;
-  color: #b35512;
+  color: #44d7a8;
 }
 </style>
