@@ -17,6 +17,8 @@ const {
   currentPlayerIndex,
   players,
   disabled,
+  currentNumber,
+  rolling,
 } = useGameProgress(noOfPlayers);
 
 defineExpose({
@@ -34,6 +36,9 @@ defineExpose({
 <template>
   <div class="container">
     <div class="wrapper">
+      <div class="dice" v-if="rolling === true">
+        <span>{{ currentNumber }}</span>
+      </div>
       <canvas id="canvas" width="800" height="800"></canvas>
       <div id="snake-board">
         <div class="row" v-for="(row, rowIndex) in rows" :key="rowIndex">
@@ -154,5 +159,21 @@ defineExpose({
 
 #snake-board .row > .column.snake-highlight {
   animation: pulse 0.4s infinite ease-in-out;
+}
+
+.dice {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20em;
+  font-weight: bold;
+  background: #ccc;
+  border-radius: 12px;
+  opacity: 0.8;
+  z-index: 999;
+  color: #b35512;
 }
 </style>

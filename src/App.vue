@@ -25,12 +25,13 @@ const restart = () => {
 };
 
 const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
+const noOfPlayers = 2;
 </script>
 
 <template>
   <div id="root">
     <div id="board">
-      <SnakesLadder :no-of-players="2" ref="snakeBoardRef" />
+      <SnakesLadder :no-of-players="noOfPlayers" ref="snakeBoardRef" />
       <div class="restart" v-if="!!snakeBoardRef?.gameEnded">
         <span class="win-text"
           >Player {{ snakeBoardRef?.currentPlayerIndex + 1 }} Won</span
@@ -63,7 +64,7 @@ const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
               :fill="playerColors[index]"
             />
           </svg>
-          <span>Position: {{ player.step }}</span>
+          <span class="position">Position: {{ player.step }}</span>
         </div>
       </div>
 
@@ -143,7 +144,10 @@ const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
 
 .players {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
+  align-items: center;
+  justify-content: center;
 }
 
 .player {
@@ -187,5 +191,17 @@ const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
 .game-status {
   display: flex;
   justify-content: space-between;
+}
+
+.position {
+  background-color: #ffc600;
+  padding: 4px;
+  letter-spacing: 4px;
+  font-size: 24px;
+  font-weight: 600;
+  align-self: center;
+  margin-bottom: 8px;
+  color: #44693d;
+  border-radius: 4px;
 }
 </style>

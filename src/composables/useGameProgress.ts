@@ -6,6 +6,7 @@ export default function useGameProgress(noOfPlayers: number) {
   const dicesList = [1, 2, 3, 4, 5, 6];
   const gameStarted = ref(false);
   const gameEnded = ref(false);
+  const rolling = ref(false);
 
   const players = ref<Record<string, { step: number; started: boolean }>>(
     Object.fromEntries(
@@ -270,46 +271,75 @@ export default function useGameProgress(noOfPlayers: number) {
     }
   };
 
+  let rollInterval: number;
+  const currentNumber = ref(1);
+
   const handler = async () => {
-    const index = Math.floor(Math.random() * dicesList.length);
-    const value = dicesList[index];
+    if (rolling.value) return;
 
-    rolled.value = value;
-    // alert("Current rolled is " + value);
+    rolling.value = true;
 
-    let tempIndex = currentPlayerIndex.value;
-    const { step, started } = players.value[tempIndex];
+    rollInterval = setInterval(() => {
+      const index = Math.floor(Math.random() * dicesList.length);
+      currentNumber.value = dicesList[index];
+    }, 100);
 
-    if (started) {
-      if (step + value >= 100) {
-        players.value[tempIndex].step = 100;
-        gameEnded.value = true;
-        return;
-      }
-
-      players.value[tempIndex].step = step + value;
-      await changeCallback(step + value);
-
-      // If it is a ladder or snake wait
-      isMoving.value = true;
+    // Stop rolling after 2 seconds
+    setTimeout(async () => {
+      clearInterval(rollInterval);
       setTimeout(() => {
-        if (![6, 5, 1].includes(value)) {
-          rotatePlayer();
+        rolling.value = false;
+      }, 300);
+
+      const value = currentNumber.value;
+      rolled.value = currentNumber.value;
+      // alert("Current rolled is " + value);
+
+      let tempIndex = currentPlayerIndex.value;
+      const { step, started } = players.value[tempIndex];
+
+      if (started) {
+        if (step + value > 100) {
+          isMoving.value = true;
+          setTimeout(() => {
+            if (![6, 1].includes(value)) {
+              rotatePlayer();
+            }
+            isMoving.value = false;
+          }, 500);
+          return;
         }
-        isMoving.value = false;
-      }, 500);
-    } else {
-      if (value === 1) {
-        players.value[tempIndex].started = true;
-        players.value[tempIndex].step = 0;
-      } else {
+
+        if (step + value === 100) {
+          players.value[tempIndex].step = 100;
+          gameEnded.value = true;
+          return;
+        }
+
+        players.value[tempIndex].step = step + value;
+        await changeCallback(step + value);
+
+        // If it is a ladder or snake wait
         isMoving.value = true;
         setTimeout(() => {
-          rotatePlayer();
+          if (![6, 1].includes(value)) {
+            rotatePlayer();
+          }
           isMoving.value = false;
         }, 500);
+      } else {
+        if (value === 1) {
+          players.value[tempIndex].started = true;
+          players.value[tempIndex].step = 0;
+        } else {
+          isMoving.value = true;
+          setTimeout(() => {
+            rotatePlayer();
+            isMoving.value = false;
+          }, 500);
+        }
       }
-    }
+    }, 2000);
   };
 
   function restart() {
@@ -340,5 +370,7 @@ export default function useGameProgress(noOfPlayers: number) {
     currentPlayerIndex,
     players,
     disabled,
+    currentNumber,
+    rolling,
   };
 }
