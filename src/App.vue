@@ -23,13 +23,15 @@ const rollDice = () => {
 const restart = () => {
   if (snakeBoardRef.value) {
     snakeBoardRef.value?.restart();
+    alert("Game is restarted");
   }
 };
 
-// Debounced version of rollDice with a 300ms delay
-const debouncedRollDice = debounce(rollDice, 1000);
-// Debounced version of rollDice with a 300ms delay
-const debouncedRestart = debounce(restart, 1000);
+// Debounced version of rollDice with a 500ms delay
+const debouncedRollDice = debounce(rollDice, 300);
+
+// Debounced version of restart with a 500ms delay
+const debouncedRestart = debounce(restart, 300);
 
 const playerColors = ["#004EFF", "#fe5000", "#D62598"];
 const noOfPlayers = 2;
@@ -39,11 +41,12 @@ const noOfPlayers = 2;
   <div id="root">
     <div id="board">
       <SnakesLadder :no-of-players="noOfPlayers" ref="snakeBoardRef" />
-      <div class="restart" v-if="!!snakeBoardRef?.gameEnded">
+      <div class="restart" v-if="snakeBoardRef?.gameEnded">
         <span class="win-text"
-          >Player {{ snakeBoardRef?.currentPlayerIndex + 1 }} Won</span
+          >Player {{ snakeBoardRef?.currentPlayerIndex + 1 }} Won
+          <span style="font-size: 38px">&#127881;</span></span
         >
-        <button @click="restart">Restart Game</button>
+        <button class="btn btn-secondary" @click="restart">RESTART</button>
       </div>
     </div>
     <div id="game-progress">
@@ -103,9 +106,20 @@ const noOfPlayers = 2;
   position: relative;
 }
 
+.win-text {
+  font-size: 32px;
+  color: #5e5b55;
+  letter-spacing: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+}
+
 .restart {
   position: absolute;
-  background-color: #dadada;
+  background-color: #f5f5f5;
+  opacity: 0.9;
   z-index: 1;
   left: 0;
   right: 0;
@@ -115,22 +129,6 @@ const noOfPlayers = 2;
   flex-flow: column;
   justify-content: center;
   align-items: center;
-}
-
-.win-text {
-  font-size: 32px;
-}
-
-.restart button {
-  padding: 4px;
-  margin: 4px;
-  color: #363636;
-  background-color: #00b2a9;
-  outline: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 28px;
 }
 
 #game-progress {
