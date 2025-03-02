@@ -35,11 +35,15 @@ const debouncedRollDice = debounce(rollDice, 300);
 const debouncedRestart = debounce(restart, 300);
 
 const playerColors = ["#004EFF", "#fe5000", "#D62598"];
-const noOfPlayers = 3;
+const noOfPlayers = 2;
 
 // Function to handle keydown events
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Enter" && !snakeBoardRef.value?.rolling) {
+  if (
+    event.key === "Enter" &&
+    !snakeBoardRef.value?.disabled &&
+    !snakeBoardRef.value?.rolling
+  ) {
     debouncedRollDice();
   } else {
     console.log("Rolling in progress");
