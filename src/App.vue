@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import SnakesLadder from "./components/SnakesLadder.vue";
 import { debounce } from "./utils/debounce";
 const snakeBoardRef = ref<{
@@ -22,8 +22,9 @@ const rollDice = () => {
 
 const restart = () => {
   if (snakeBoardRef.value) {
-    snakeBoardRef.value?.restart();
     alert("Game is restarted");
+    // snakeBoardRef.value?.restart();
+    window.location.reload();
   }
 };
 
@@ -34,7 +35,28 @@ const debouncedRollDice = debounce(rollDice, 300);
 const debouncedRestart = debounce(restart, 300);
 
 const playerColors = ["#004EFF", "#fe5000", "#D62598"];
-const noOfPlayers = 2;
+const noOfPlayers = 3;
+
+// Function to handle keydown events
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Enter" && !snakeBoardRef.value?.rolling) {
+    debouncedRollDice();
+  } else {
+    console.log("Rolling in progress");
+  }
+};
+
+const debouncedKeydown = debounce(handleKeydown, 1000);
+
+// Add event listener when component is mounted
+onMounted(() => {
+  document.addEventListener("keydown", debouncedKeydown);
+});
+
+// Remove event listener before component is unmounted
+onBeforeUnmount(() => {
+  document.removeEventListener("keydown", debouncedKeydown);
+});
 </script>
 
 <template>
