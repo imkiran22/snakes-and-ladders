@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import SnakesLadder from "./components/SnakesLadder.vue";
+import { debounce } from "./utils/debounce";
 const snakeBoardRef = ref<{
   handler: () => void;
   restart: () => void;
@@ -10,6 +11,7 @@ const snakeBoardRef = ref<{
   currentPlayerIndex: number;
   players: Record<string, { step: number; started: boolean }>;
   disabled: boolean;
+  rolling: boolean;
 }>();
 
 const rollDice = () => {
@@ -24,8 +26,13 @@ const restart = () => {
   }
 };
 
-const playerColors = ["#aadb1e", "#fe5000", "#ffc600"];
-const noOfPlayers = 3;
+// Debounced version of rollDice with a 300ms delay
+const debouncedRollDice = debounce(rollDice, 1000);
+// Debounced version of rollDice with a 300ms delay
+const debouncedRestart = debounce(restart, 1000);
+
+const playerColors = ["#004EFF", "#fe5000", "#D62598"];
+const noOfPlayers = 2;
 </script>
 
 <template>
@@ -41,9 +48,11 @@ const noOfPlayers = 3;
     </div>
     <div id="game-progress">
       <div class="game-status">
-        <div>Game Started: {{ snakeBoardRef?.gameStarted }}</div>
-        <div>Game Over: {{ snakeBoardRef?.gameEnded }}</div>
-        <div>Last Roll: {{ snakeBoardRef?.rolled }}</div>
+        <!-- <div>Game Started: {{ snakeBoardRef?.gameStarted }}</div>
+        <div>Game Over: {{ snakeBoardRef?.gameEnded }}</div> -->
+        <div class="last-roll position">
+          Last Roll: {{ snakeBoardRef?.rolled }}
+        </div>
       </div>
       <div class="players">
         <div
@@ -52,7 +61,7 @@ const noOfPlayers = 3;
           :class="{ active: snakeBoardRef?.currentPlayerIndex === index }"
           :key="index"
         >
-          <span>Player {{ index + 1 }}</span>
+          <span class="player-text">Player {{ index + 1 }}</span>
           <svg width="300" height="130" xmlns="http://www.w3.org/2000/svg">
             <rect
               width="40"
@@ -69,8 +78,16 @@ const noOfPlayers = 3;
       </div>
 
       <div class="actions" :class="{ disabled: snakeBoardRef?.disabled }">
-        <button class="btn-primary" @click="rollDice">Roll a dice</button>
-        <button class="btn-secondary" @click="restart">Restart Game</button>
+        <button
+          class="btn btn-primary"
+          :class="{ disabled: snakeBoardRef?.rolling }"
+          @click="debouncedRollDice"
+        >
+          {{ snakeBoardRef?.rolling ? "Rolling ..." : "Roll a dice" }}
+        </button>
+        <button class="btn btn-secondary" @click="debouncedRestart">
+          Restart Game
+        </button>
       </div>
     </div>
   </div>
@@ -120,26 +137,33 @@ const noOfPlayers = 3;
   display: flex;
   flex-direction: column;
   flex: 0.5;
-  gap: 12px;
+  gap: 24px;
   align-self: center;
 }
+
+.btn {
+  padding: 12px 24px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-primary {
   color: #fff;
-  background-color: blue;
-  padding: 8px;
-  outline: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background-color: #0827f5;
 }
 .btn-secondary {
-  color: #363636;
-  background-color: skyblue;
-  padding: 8px;
-  outline: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  color: #000;
+  background-color: #cdc4aa;
 }
 
 .players {
@@ -155,13 +179,13 @@ const noOfPlayers = 3;
   flex-flow: column;
   align-items: flex-start;
   justify-content: flex-start;
-  background-color: #00a3e1;
+  background-color: #36454f;
   padding: 4px;
   border-radius: 8px;
 }
 
 .player.active {
-  background-color: #009a17;
+  background-color: #08ff08;
   animation: bounceScale 0.4s ease-in;
 }
 
@@ -190,18 +214,37 @@ const noOfPlayers = 3;
 
 .game-status {
   display: flex;
-  justify-content: space-between;
+  align-self: center;
 }
 
 .position {
-  background-color: #ffc600;
+  background-color: #dfd7c8;
   padding: 4px;
   letter-spacing: 4px;
   font-size: 24px;
   font-weight: 600;
   align-self: center;
   margin-bottom: 8px;
-  color: #44693d;
+  color: #5e5b55;
   border-radius: 4px;
+}
+
+.player-text {
+  color: #5e5b55;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  align-self: center;
+  background-color: #fe9a0a;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.last-roll {
+  background-color: #00958a !important;
+  color: whitesmoke !important;
+  letter-spacing: 6px !important;
+  padding: 6px 12px;
 }
 </style>

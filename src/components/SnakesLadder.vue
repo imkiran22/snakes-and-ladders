@@ -30,6 +30,7 @@ defineExpose({
   currentPlayerIndex,
   players,
   disabled,
+  rolling,
 });
 </script>
 
@@ -127,7 +128,7 @@ defineExpose({
 }
 
 #snake-board .row > .column.active-1 {
-  background-color: #aadb1e;
+  background-color: #004eff;
 }
 
 #snake-board .row > .column.active-2 {
@@ -135,7 +136,7 @@ defineExpose({
 }
 
 #snake-board .row > .column.active-3 {
-  background-color: #ffc600;
+  background-color: #d62598;
 }
 
 #snake-board .row > .column.active-more {
