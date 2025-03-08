@@ -118,7 +118,7 @@ export default function useGameProgress(noOfPlayers: number) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.strokeStyle = "#F20F5A";
+    ctx.strokeStyle = "#00873E";
     ctx.lineWidth = 3;
     ctx.lineCap = "round";
 
@@ -169,7 +169,7 @@ export default function useGameProgress(noOfPlayers: number) {
       // **🐍 Snake Head**
       ctx.beginPath();
       ctx.arc(startX, startY, 12, 0, Math.PI * 2);
-      ctx.fillStyle = "#A60A3D";
+      ctx.fillStyle = "#9B945F";
       ctx.fill();
       ctx.stroke();
 
@@ -181,7 +181,7 @@ export default function useGameProgress(noOfPlayers: number) {
       ctx.fill();
 
       // **🖤 Pupils**
-      ctx.fillStyle = "#b30018";
+      ctx.fillStyle = "#A10500";
       ctx.beginPath();
       ctx.arc(startX - 4, startY - 5, 1, 0, Math.PI * 2);
       ctx.arc(startX + 4, startY - 5, 1, 0, Math.PI * 2);

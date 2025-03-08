@@ -50,7 +50,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
-const debouncedKeydown = debounce(handleKeydown, 1000);
+const debouncedKeydown = debounce(handleKeydown, 200);
 
 // Add event listener when component is mounted
 onMounted(() => {
@@ -125,7 +125,8 @@ onBeforeUnmount(() => {
 <style scoped>
 #root {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  font-family: "Poppins";
 }
 #board {
   flex: 1;
@@ -162,7 +163,8 @@ onBeforeUnmount(() => {
   flex-direction: column;
   flex: 0.5;
   gap: 24px;
-  align-self: center;
+  justify-content: space-around;
+  align-items: stretch;
 }
 
 .btn {
